@@ -1,0 +1,17 @@
+# Python virtual environment (each person creates their own)
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Secrets: API keys live here and must NEVER be pushed to GitHub
+.env
+
+# Downloaded docs and generated chunks: rebuilt by running ingest.py and chunk.py
+data/
+
+# OS clutter
+.DS_Store
+Thumbs.db

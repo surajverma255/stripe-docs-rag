@@ -1,0 +1,4 @@
+requests>=2.31
+chromadb>=1.5
+fastembed>=0.9
+tqdm>=4.66
