@@ -436,7 +436,7 @@ body, .gradio-container { background: var(--paper) !important; }
 .masthead a { color: var(--signal); }
 
 /* Evidence panel: the signature element. */
-.evidence { padding: 4px 2px; color: var(--ink); }
+.evidence { padding: 4px 2px; color: var(--ink); text-align: left; }
 .ev-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
 .ev-intro { color: var(--muted); margin: 0 0 4px; line-height: 1.5; }
 .ev-note { color: var(--ink); margin: 0 0 14px; font-weight: 500; }
