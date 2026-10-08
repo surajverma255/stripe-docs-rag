@@ -24,3 +24,8 @@ services:
         sync: false
       - key: HF_TOKEN              # A READ-only Hugging Face token.
         sync: false
+      # The visit counter's database (Upstash Redis, REST connection details).
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false

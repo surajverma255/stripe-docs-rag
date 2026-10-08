@@ -17,6 +17,7 @@ import re
 from pathlib import Path
 
 import gradio as gr
+import requests
 from dotenv import load_dotenv
 from groq import AuthenticationError, NotFoundError, RateLimitError
 from huggingface_hub import snapshot_download
@@ -63,6 +64,39 @@ def ensure_index():
         allow_patterns=["chroma/**", "raw/metadata.json"],
         token=os.environ.get("HF_TOKEN"),  # A read-only token, set as a Space secret.
     )
+
+
+# ---------------------------------------------------------------------------
+# Visit counter
+# The free host wipes its disk whenever the app sleeps or redeploys, so the
+# count lives in a small external Redis database (Upstash). Redis's INCR
+# command adds 1 and returns the new total in a single step, so two visitors
+# arriving at the same moment can't both read 41 and both write 42.
+# ---------------------------------------------------------------------------
+COUNTER_URL = os.environ.get("UPSTASH_REDIS_REST_URL")
+COUNTER_TOKEN = os.environ.get("UPSTASH_REDIS_REST_TOKEN")
+COUNTER_KEY = "stripe-docs-rag:visits"
+
+
+def record_visit():
+    """Add one visit and return the counter's HTML. Runs on every page load.
+
+    The counter is decoration, so it must never break the app: if it isn't
+    configured or the database is unreachable, it simply stays hidden.
+    """
+    if not (COUNTER_URL and COUNTER_TOKEN):
+        return ""
+    try:
+        response = requests.post(
+            f"{COUNTER_URL}/incr/{COUNTER_KEY}",
+            headers={"Authorization": f"Bearer {COUNTER_TOKEN}"},
+            timeout=3,
+        )
+        total = int(response.json()["result"])
+    except Exception as error:
+        print(f"Visit counter unavailable: {error!r}")
+        return ""
+    return f'<p class="visits"><strong>{total:,}</strong> {"visit" if total == 1 else "visits"} since launch</p>'
 
 
 # ---------------------------------------------------------------------------
@@ -398,6 +432,8 @@ body, .gradio-container { background: var(--paper) !important; }
 .pipe-text strong { font-weight: 700; font-size: 1rem; color: var(--ink); }
 .pipe-text span { color: var(--muted); font-size: 0.87rem; }
 .built-with { color: var(--muted); font-size: 0.88rem; margin: 16px 0 0 !important; }
+.visits { color: var(--muted); font-size: 0.92rem; margin: 2px 4px 0 !important; }
+.visits strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 @keyframes pipe-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 /* Narrower strip: three across, then two, then a single column with the
    icon beside the text. Arrows only make sense in a single row, so hide them. */
@@ -599,6 +635,7 @@ with gr.Blocks(title="Stripe Docs Assistant (unofficial)") as demo:
       Built from scratch as a retrieval-augmented generation project. <a href="{REPO_URL}" target="_blank" rel="noopener">Read the code on GitHub</a>.</p>
       {render_pipeline(stats)}
     </header>""")
+    visit_counter = gr.HTML("")
 
     with gr.Tabs():
         with gr.Tab("Ask a question"):
@@ -636,6 +673,13 @@ with gr.Blocks(title="Stripe Docs Assistant (unofficial)") as demo:
       Built by {AUTHOR}. Not affiliated with or endorsed by Stripe; answers can be wrong, so
       check the linked sources. <a href="{REPO_URL}" target="_blank" rel="noopener">Source code</a>
     </footer>""")
+
+    # Count a visit each time the page opens in a browser. demo.load runs from
+    # the page's JavaScript, so uptime pings and bots that don't run
+    # JavaScript aren't counted. "private" keeps this endpoint out of the
+    # public API, so nobody can inflate the count with a script.
+    demo.load(record_visit, outputs=visit_counter, show_progress="hidden",
+              api_visibility="private")
 
     outputs = [chatbot, question_box, evidence_panel]
     ask_button.click(respond, [question_box, chatbot], outputs)
