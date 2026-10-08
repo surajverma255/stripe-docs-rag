@@ -11,6 +11,7 @@ Needs a Groq API key in a file called .env (see .env.example).
 
 import re
 import sys
+import time
 
 from dotenv import load_dotenv
 from groq import AuthenticationError, Groq, NotFoundError, RateLimitError
@@ -78,14 +79,25 @@ def normalize_citations(answer_text):
     return re.sub(r"【(\d+)[^】]*】", r"[\1]", answer_text)
 
 
+# Matches code: ```fenced blocks``` and `inline code`. Code often contains
+# things like line_items[1], which must not be mistaken for citations.
+CODE_PATTERN = re.compile(r"(```.*?```|`[^`\n]*`)", re.DOTALL)
+
+
+def split_code(text):
+    """Split text into pieces; odd indexes are code, even indexes are prose."""
+    return CODE_PATTERN.split(text)
+
+
 def cited_sources(answer_text, chunks):
     """Return only the chunks the answer actually cited, in citation order.
 
     We retrieved 5 chunks, but the answer may only use 2 of them. Showing
     users just the cited ones keeps the source list honest and short.
     """
+    prose = "".join(split_code(answer_text)[0::2])
     cited, seen = [], set()
-    for match in re.finditer(r"\[(\d+)\]", answer_text):
+    for match in re.finditer(r"\[(\d+)\]", prose):
         number = int(match.group(1))
         if 1 <= number <= len(chunks) and number not in seen:
             seen.add(number)
@@ -101,8 +113,13 @@ def answer(question):
       sources    - the chunks the reply cited
       retrieved  - all chunks we retrieved (useful for debugging and Stage 7)
       found      - False when the model said the docs don't cover it
+      timings    - milliseconds spent retrieving and generating
+      usage      - tokens sent to and received from the LLM
     """
+    # time.perf_counter() is a high-precision stopwatch for measuring durations.
+    start = time.perf_counter()
     chunks = retrieve(question)
+    retrieval_ms = (time.perf_counter() - start) * 1000
 
     # Reasoning settings only make sense for reasoning models; other models
     # would reject them, so we add them only for gpt-oss.
@@ -114,19 +131,28 @@ def answer(question):
             "include_reasoning": False,
         }
 
+    start = time.perf_counter()
     response = Groq().chat.completions.create(
         model=LLM_MODEL,
         messages=build_messages(question, chunks),
         temperature=LLM_TEMPERATURE,
         **extra_options,
     )
+    generation_ms = (time.perf_counter() - start) * 1000
+
     answer_text = normalize_citations(response.choices[0].message.content.strip())
     found = NO_ANSWER not in answer_text
+    usage = response.usage
     return {
         "answer": answer_text,
         "sources": cited_sources(answer_text, chunks) if found else [],
         "retrieved": chunks,
         "found": found,
+        "timings": {"retrieval_ms": round(retrieval_ms), "generation_ms": round(generation_ms)},
+        "usage": {
+            "prompt_tokens": getattr(usage, "prompt_tokens", None),
+            "completion_tokens": getattr(usage, "completion_tokens", None),
+        },
     }
 
 

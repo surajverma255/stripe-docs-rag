@@ -1,6 +1,9 @@
-requests>=2.31
-chromadb>=1.5
-fastembed>=0.9
-tqdm>=4.66
-groq>=1.0
-python-dotenv>=1.0
+# Exact versions, so the hosted app runs the same code you tested locally.
+requests==2.34.2
+chromadb==1.5.9
+fastembed==0.9.0
+tqdm==4.70.1
+groq==1.7.0
+python-dotenv==1.2.4
+gradio==6.29.1
+huggingface_hub==1.33.0

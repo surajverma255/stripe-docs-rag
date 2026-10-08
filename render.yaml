@@ -1,0 +1,26 @@
+# Render "Blueprint": describes how Render should run this app.
+# Render reads this file from the GitHub repository and redeploys
+# automatically every time you push to main.
+services:
+  - type: web
+    name: stripe-docs-rag
+    runtime: python
+    plan: free                      # 512 MB RAM, 0.1 CPU, sleeps after 15 idle minutes
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    autoDeployTrigger: commit
+    envVars:
+      # Where the app downloads its prebuilt index from (see publish_index.py).
+      - key: INDEX_REPO
+        value: savage255/stripe-docs-rag-index
+      # Turn off usage analytics that Gradio and ChromaDB send by default.
+      - key: GRADIO_ANALYTICS_ENABLED
+        value: "False"
+      - key: ANONYMIZED_TELEMETRY
+        value: "False"
+      # Secrets: "sync: false" makes Render ask for these values in its
+      # dashboard, so they never appear in this public file.
+      - key: GROQ_API_KEY
+        sync: false
+      - key: HF_TOKEN              # A READ-only Hugging Face token.
+        sync: false

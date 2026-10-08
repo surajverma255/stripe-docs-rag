@@ -1,0 +1,641 @@
+{
+  "run_at": "2026-10-08T19:05:37+00:00",
+  "config": {
+    "llm_model": "openai/gpt-oss-120b",
+    "judge_model": "openai/gpt-oss-20b",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "top_k": 5,
+    "indexed_passages": 2425
+  },
+  "summary": {
+    "questions": 28,
+    "hit_rate": 0.958,
+    "hit_rate_direct": 1,
+    "hit_rate_casual": 0.75,
+    "mrr": 0.938,
+    "correct_declines": 4,
+    "unanswerable_total": 4,
+    "false_refusals": 0,
+    "answerable_total": 24,
+    "faithfulness": 0.968,
+    "fully_grounded": 0.917,
+    "median_latency_ms": 1356
+  },
+  "rows": [
+    {
+      "id": "q01",
+      "question": "Which test card number simulates a generic card decline?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/testing"
+      ],
+      "latency_ms": 1602,
+      "answer": "The test card number that simulates a generic card decline is:\n\n**4000000000000002**[1]",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q02",
+      "question": "Which test card triggers an insufficient funds decline?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/testing"
+      ],
+      "latency_ms": 1001,
+      "answer": "The test card number that simulates an **insufficient‑funds decline** is:\n\n**`4000000000009995`**[2]",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/declines"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q03",
+      "question": "How do I cancel a subscription at the end of the current billing period?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/billing/subscriptions/cancel"
+      ],
+      "latency_ms": 1064,
+      "answer": "To cancel a subscription so it remains active until the current billing period ends, update the subscription with `cancel_at_period_end=true`:\n\n```bash\ncurl https://api.stripe.com/v1/subscriptions/{{SUBSCRIPTION_ID}} \\\n  -u \"<<YOUR_SECRET_KEY>>:\" \\\n  -d cancel_at_period_end=true\n```\n\nThis schedules the cancellation for the period’s end while keeping the subscription active for the time already paid for. You can reactivate it anytime before the period ends by setting `cancel_at_period_end` back to `false`[1].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/billing/subscriptions/cancel",
+        "https://docs.stripe.com/billing/subscriptions/cancel",
+        "https://docs.stripe.com/billing/subscriptions/cancel",
+        "https://docs.stripe.com/billing/subscriptions/billing-cycle",
+        "https://docs.stripe.com/billing/subscriptions/cancel"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q04",
+      "question": "How do I pause payment collection on a subscription?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/billing/subscriptions/pause-payment"
+      ],
+      "latency_ms": 2164,
+      "answer": "You can pause payment collection for a subscription either from the Dashboard or with the API.\n\n**Via the Dashboard**\n\n1. Open the **Subscriptions** page and select the subscription you want to pause.  \n2. Click the overflow menu (⋯) and choose **Pause payment collection**.  \n3. Choose the duration:  \n   - **Indefinite** – stays paused until you resume it.  \n   - **Until a custom date** – Stripe will automatically resume on the date you set.  \n4. Choose the invoice behavior:  \n   - **Keep invoices as drafts** – invoices are created as drafts and can be finalized later.  \n   - **Mark invoices uncollectible** – invoices are marked uncollectible, no payment is collected.  \n   - **Void invoices** – invoices are voided, no charge record is created.  \n5. Click **Pause**.[5]\n\n**Via the API**\n\n1. Update the subscription and set `pause_collection[behavior]` (e.g., `keep_as_draft`).  \n2. (Optional) Set `pause_collection[resumes_at]` to a Unix timestamp if you want Stripe to resume automatically.  \n\nExample cURL request:\n\n```bash\ncurl https://api.stripe.com/v1/subscriptions/{{SUBSCRIPTION_ID}} \\\n  -u \"<<YOUR_SECRET_KEY>>:\" \\\n  -d \"pause_collection[behavior]=keep_as_draft\"\n```\n\nYou can also add `-d \"pause_collection[resumes_at]=<timestamp>\"` to schedule an automatic resume.[3]",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/billing/subscriptions/pause-payment",
+        "https://docs.stripe.com/billing/subscriptions/pause-payment",
+        "https://docs.stripe.com/billing/subscriptions/pause-payment",
+        "https://docs.stripe.com/billing/subscriptions/pause-payment",
+        "https://docs.stripe.com/billing/subscriptions/pause-payment"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q05",
+      "question": "What types of errors can the Stripe API return?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/api/errors"
+      ],
+      "latency_ms": 1436,
+      "answer": "The Stripe API can return four distinct error types:\n\n1. **`api_error`** – generic API problems such as temporary issues with Stripe’s servers.  \n2. **`card_error`** – errors caused by a card that can’t be charged (e.g., declined, incorrect CVC).  \n3. **`idempotency_error`** – occurs when an `Idempotency-Key` is reused on a request that doesn’t match the original endpoint or parameters.  \n4. **`invalid_request_error`** – triggered by invalid request parameters.  \n\nThese are defined in the Stripe error documentation[1].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/api/errors",
+        "https://docs.stripe.com/api/errors",
+        "https://docs.stripe.com/api/errors",
+        "https://docs.stripe.com/payments/quickstart",
+        "https://docs.stripe.com/declines"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q06",
+      "question": "What causes an idempotency_error?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/api/errors"
+      ],
+      "latency_ms": 1504,
+      "answer": "An **idempotency_error** occurs when you reuse an `Idempotency-Key` on a request whose API endpoint or parameters differ from those of the original request that used that key[1].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/api/errors",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/api/errors",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/billing/subscriptions/import-subscriptions-toolkit"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q07",
+      "question": "How do I send a request with a specific API version instead of my account's default?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/api/versioning",
+        "https://docs.stripe.com/upgrades"
+      ],
+      "latency_ms": 1803,
+      "answer": "You can override the account‑default API version when you make a request by setting the version either **globally** for the SDK or **per‑request**.\n\n**1. Ruby**\n\n*Globally*  \n\n```ruby\nrequire 'stripe'\nclient = Stripe::StripeClient.new('<<YOUR_SECRET_KEY>>', stripe_version: '2026-09-30.endive')\n```\n\n*Per‑request*  \n\n```ruby\nrequire 'stripe'\nclient = Stripe::StripeClient.new('<<YOUR_SECRET_KEY>>')\nintent = client.v1.payment_intents.retrieve(\n  'pi_1DlIVK2eZvKYlo2CW4yj5l2C',\n  { stripe_version: '2026-09-30.endive' }\n)\nintent.capture\n```  \n[3]\n\n**2. Node**\n\n*Globally*  \n\n```javascript\nconst stripe = require('stripe')('<<YOUR_SECRET_KEY>>', {\n  apiVersion: '2026-09-30.endive',\n});\n```\n\n*Per‑request*  \n\n```javascript\nconst intent = await stripe.paymentIntents.retrieve(\n  'pi_1DlIVK2eZvKYlo2CW4yj5l2C',\n  { apiVersion: '2026-09-30.endive' }\n);\n```\n[4]\n\n**3. Python**\n\n*Globally*  \n\n```python\nimport stripe\nstripe.api_key = <<YOUR_SECRET_KEY>>\nstripe.api_version = '2026-09-30.endive'\n```\n\n*Per‑request*  \n\n```python\nimport stripe\nintent = stripe.PaymentIntent.retrieve(\n  \"pi_1DlIVK2eZvKYlo2CW4yj5l2C\",\n  stripe_version=\"2026-09-30.endive\",\n)\nintent.capture()\n```\n[5]\n\n**Summary steps**\n\n1. Choose the SDK language.  \n2. Either set the version globally (via `stripe_version`, `apiVersion`, or `stripe.api_version`).  \n3. Or pass the version option on the individual request (`stripe_version` / `apiVersion`).  \n\nThe request will then be processed using the specified API version instead of the account’s default.",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/upgrades",
+        "https://docs.stripe.com/api/versioning",
+        "https://docs.stripe.com/upgrades",
+        "https://docs.stripe.com/upgrades",
+        "https://docs.stripe.com/upgrades"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q08",
+      "question": "How long does Stripe keep retrying webhook deliveries in live mode?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/webhooks"
+      ],
+      "latency_ms": 1058,
+      "answer": "Stripe retries webhook deliveries for up to **three days** in live mode [1][2]",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/webhooks/quickstart",
+        "https://docs.stripe.com/events/manage-webhook-endpoints"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q09",
+      "question": "What status code should my webhook endpoint return?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/webhooks/quickstart"
+      ],
+      "latency_ms": 889,
+      "answer": "Your webhook endpoint should quickly return a successful 2xx status code—typically a `200` response—before performing any additional processing[1][3].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/webhooks/quickstart"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q10",
+      "question": "Can I refund more than the original charge amount?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/refunds"
+      ],
+      "latency_ms": 924,
+      "answer": "You cannot refund a total greater than the original charge amount — refunds are limited to the amount of the original charge[1].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q11",
+      "question": "Can I cancel a refund after issuing it?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/refunds"
+      ],
+      "latency_ms": 1181,
+      "answer": "Yes. You can cancel a refund after it’s been created, but cancellation is only possible under certain conditions:\n\n* **Card refunds** – You can cancel only via the Dashboard and only within the short window before the refund is processed as a charge reversal [1].\n* **Other payment methods** (e.g., ACH, iDEAL) – You can cancel while Stripe is still collecting the customer’s banking information; both the API and Dashboard support this [1].\n\n**How to cancel via the Dashboard**\n\n1. Find the payment associated with the refund on the Payments page.  \n2. Click the overflow menu (⋯) next to the payment and select **Cancel refund**.  \n3. If there are multiple partial refunds, choose the correct one from the dropdown.  \n4. Confirm by clicking **Yes, cancel refund** [4].\n\nCancelled refunds receive a `canceled` status and include `failure_reason` and `failure_balance_transaction` fields [1].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q12",
+      "question": "How long can I hold funds on a Visa card before capturing the payment?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/payments/place-a-hold-on-a-payment-method"
+      ],
+      "latency_ms": 2327,
+      "answer": "For a Visa (card) payment, the authorization hold typically lasts **up to 7 days for online transactions** (and 2 days for in‑person Terminal payments) before you must capture the funds[4].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/payments/place-a-hold-on-a-payment-method",
+        "https://docs.stripe.com/payments/place-a-hold-on-a-payment-method",
+        "https://docs.stripe.com/payments/place-a-hold-on-a-payment-method",
+        "https://docs.stripe.com/payments/place-a-hold-on-a-payment-method",
+        "https://docs.stripe.com/payments/place-a-hold-on-a-payment-method"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q13",
+      "question": "How should I format amounts in API requests for different currencies?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/currencies"
+      ],
+      "latency_ms": 1569,
+      "answer": "- **Two‑decimal currencies (most currencies, e.g., USD, EUR)** – API requests expect the amount in the currency’s *minor unit* (no decimal point).  \n  Example: to charge $10.00, send `amount=1000` [1].\n\n- **Zero‑decimal currencies (e.g., JPY, KRW)** – the amount you send is the exact charge value; no multiplication is needed.  \n  Example: to charge 500 JPY, send `amount=500` [2].\n\n- **Special cases**  \n  * **Icelandic króna (ISK)** – treated as zero‑decimal for the API, but you must still send a two‑decimal representation with “00” as the cents. To charge 5 ISK, send `amount=500` [5].  \n  * **Hungarian forint (HUF)** – for payouts, Stripe treats it as zero‑decimal, and the amount must be a multiple of 100 (i.e., whole forints). To payout 10 HUF, send `amount=1000`; you cannot payout a fractional amount like 10.45 HUF [5].\n\nSo, format amounts in the minor unit for two‑decimal currencies, use the exact integer for zero‑decimal currencies, and follow the listed special‑case rules for ISK and HUF.",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/currencies",
+        "https://docs.stripe.com/currencies",
+        "https://docs.stripe.com/payments/checkout/localize-prices/manual-currency-prices",
+        "https://docs.stripe.com/currencies",
+        "https://docs.stripe.com/currencies"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q14",
+      "question": "How do I verify webhook signatures?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/webhooks/quickstart"
+      ],
+      "latency_ms": 1852,
+      "answer": "**How to verify Stripe webhook signatures**\n\n1. **Extract the signature header**  \n   - Read the `Stripe-Signature` header from the incoming request.  \n   - Print the value and confirm it follows the format `t=xxx,v1=yyy,v0=zzz`[1].  \n\n2. **Call the verification helper**  \n   - Use Stripe’s official library to verify the request.  \n   - For snapshot events call `constructEvent()`; for thin events call `parseEventNotification()`[2].  \n   - Pass three arguments:  \n\n     ```text\n     requestBody   // the raw request body string Stripe sent\n     signature     // the value of the Stripe‑Signature header\n     endpointSecret// the signing secret for your webhook endpoint\n     ```\n\n3. **(If you need to do it manually)**  \n   - Build the `signed_payload` string (`timestamp`.`.`.`payload`).  \n   - Compute an HMAC‑SHA256 using your endpoint’s signing secret as the key[3].  \n   - Compare the computed signature with each `v1` (or `v0`) signature from the header using a constant‑time string comparison to avoid timing attacks[3].  \n\n4. **Additional protections**  \n   - Optionally allow‑list Stripe’s IP addresses so only requests from those IPs are accepted[5].  \n\n**Summary**: Extract and validate the header format, then use `constructEvent()` (or `parseEventNotification()`) with the raw body, header value, and endpoint secret; or manually compute the HMAC‑SHA256 and compare it securely. This confirms the webhook really came from Stripe.",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/webhooks/quickstart",
+        "https://docs.stripe.com/events/manage-webhook-endpoints"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q15",
+      "question": "How do I let customers enter promotion codes in Checkout?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/payments/checkout/discounts",
+        "https://docs.stripe.com/api/checkout/sessions/create"
+      ],
+      "latency_ms": 2546,
+      "answer": "To let customers enter promotion codes in Checkout, you must enable the promotion‑code field when you create the Checkout Session.\n\n**Steps**\n\n1. **Create the Checkout Session with `allow_promotion_codes` set to `true`.**  \n   This adds a redemption box to the Checkout page where customers can type a code.  \n\n   ```bash\n   curl https://api.stripe.com/v1/checkout/sessions \\\n     -u \"<<YOUR_SECRET_KEY>>:\" \\\n     -d \"line_items[0][price_data][unit_amount]=2000\" \\\n     -d \"line_items[0][price_data][product_data][name]=T-shirt\" \\\n     -d \"line_items[0][price_data][currency]=usd\" \\\n     -d \"line_items[0][quantity]=1\" \\\n     -d mode=payment \\\n     -d allow_promotion_codes=true \\\n     --data-urlencode \"success_url=https://example.com/success\"\n   ```\n\n   (example from the docs)[2][3]\n\n2. **(Optional) Create a promotion code** that customers will enter, using a coupon (e.g., a 100 %‑off coupon for free orders).  \n\n   ```bash\n   curl https://api.stripe.com/v1/promotion_codes \\\n     -u \"<<YOUR_SECRET_KEY>>:\" \\\n     -d \"coupon={{COUPON_ID}}\" \\\n     -d code=FREECODE\n   ```\n\n   (example from the docs)[3]\n\nOnce the session is created with `allow_promotion_codes=true`, Checkout automatically shows the promotion‑code input field for customers.[1][2]",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/billing/subscriptions/coupons",
+        "https://docs.stripe.com/payments/checkout/discounts",
+        "https://docs.stripe.com/payments/checkout/no-cost-orders",
+        "https://docs.stripe.com/billing/subscriptions/coupons",
+        "https://docs.stripe.com/payments/checkout/discounts"
+      ],
+      "rank": 2
+    },
+    {
+      "id": "q16",
+      "question": "How do I subscribe a customer to multiple products in one subscription?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/billing/subscriptions/quantities"
+      ],
+      "latency_ms": 1275,
+      "answer": "To subscribe a customer to several products with a single subscription, create one subscription that includes multiple price items—one for each product you want to bill together. The subscription will generate a single invoice that combines all of those prices.\n\n**What the docs say**\n\n* A subscription can contain multiple products (prices) and will produce one invoice per billing period that combines every price [5].\n* This approach is different from creating separate subscriptions for each product, which would generate separate invoices [4].\n\n**What’s missing from the sources**\n\nThe documentation excerpts do not include a concrete API example showing how to pass multiple `items` in the `create subscription` request. You would need to add additional `items[n][price]` parameters for each product’s price ID, but the exact request format isn’t provided in the sources.",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 0.667,
+      "unsupported_claims": [
+        "To subscribe a customer to several products with a single subscription, create one subscription that includes multiple price items—one for each product you want to bill together.",
+        "The subscription will generate a single invoice that combines all of those prices."
+      ],
+      "retrieved_urls": [
+        "https://docs.stripe.com/billing/subscriptions/quantities",
+        "https://docs.stripe.com/billing/subscriptions/quantities",
+        "https://docs.stripe.com/billing/subscriptions/quantities",
+        "https://docs.stripe.com/billing/subscriptions/quantities",
+        "https://docs.stripe.com/billing/subscriptions/quantities"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q17",
+      "question": "Which test card requires authentication for off-session payments unless it was set up first?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/testing"
+      ],
+      "latency_ms": 1100,
+      "answer": "The test card **4000002500003155** requires authentication for off‑session payments unless it has been set up first[2].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/payments/setup-intents",
+        "https://docs.stripe.com/payments/setup-intents"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q18",
+      "question": "What does the inclusive property on a tax rate do?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/tax/tax-rates"
+      ],
+      "latency_ms": 1159,
+      "answer": "The **inclusive** flag tells Stripe that the tax is already built into the amount you charge. With an inclusive tax the tax amount is taken out of the listed price rather than added on top of it, so the subtotal shown to the customer already contains the tax portion. For example, a 25 % inclusive tax on a $5.00 line item results in a $1.00 tax that is part of the $5.00 total (the net amount before tax is $4.00)[1].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/tax/tax-rates",
+        "https://docs.stripe.com/tax/tax-rates",
+        "https://docs.stripe.com/tax/tax-rates",
+        "https://docs.stripe.com/tax/tax-rates",
+        "https://docs.stripe.com/tax/tax-rates"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q19",
+      "question": "How do I save a card for future payments without charging it now?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/payments/setup-intents",
+        "https://docs.stripe.com/payments/save-and-reuse"
+      ],
+      "latency_ms": 1204,
+      "answer": "To save a card for later use without taking a charge now, use **Checkout in setup mode**:\n\n1. Create a Checkout Session with `mode=setup`.  \n2. Include the customer (or let Checkout create one) so the payment method is attached to that customer.  \n3. When the customer completes the Checkout flow, Stripe stores the card as a saved payment method that you can later charge with the Payment Intents API.\n\nThis “setup” flow lets you onboard customers and collect their card details now, while the actual payment can be performed later. [1]",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/payments/save-and-reuse",
+        "https://docs.stripe.com/payments/save-and-reuse",
+        "https://docs.stripe.com/payments/save-during-payment",
+        "https://docs.stripe.com/payments/accept-a-payment",
+        "https://docs.stripe.com/payments/checkout/save-during-payment"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q20",
+      "question": "Which event tells me a charge was refunded?",
+      "type": "direct",
+      "expected_urls": [
+        "https://docs.stripe.com/api/events/types",
+        "https://docs.stripe.com/refunds"
+      ],
+      "latency_ms": 981,
+      "answer": "The **`charge.refunded`** event is sent when a charge is refunded (including partial refunds)[3][2].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/api/events/types",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/refunds"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q21",
+      "question": "my customer wants their money back",
+      "type": "casual",
+      "expected_urls": [
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/payment-links/post-payment"
+      ],
+      "latency_ms": 1653,
+      "answer": "To refund a customer you can use either the Stripe Dashboard or the Refunds API.\n\n**Steps**\n\n1. **Determine the charge to refund** – locate the original charge ID in your Dashboard or from your integration logs.  \n2. **Create the refund**  \n   * **Via Dashboard** – open the charge details and click **Refund**.  \n   * **Via API** – call the Refund endpoint with the charge ID (e.g., `POST /v1/refunds` with `charge={CHARGE_ID}`).  \n3. **Notify the customer (optional)** – if the charge was created on a Customer object, the Customer has a stored email, and you have enabled **Email customers for refunds** in the Dashboard, Stripe will automatically email the customer about the refund [1].  \n4. **View the refund** – refunded payments appear in the Dashboard under the original charge [1].\n\n**Additional options**\n\n* You can also let customers manage their own refunds, payment details, invoices, and subscriptions through the Customer portal [3].  \n* If you want to display your return and refund policies on Checkout, configure them in Checkout Settings [4].\n\nIf you need to add funds to your Stripe balance or perform a bank‑transfer refund, see the “See also” section of the Refunds docs [5].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 0.556,
+      "unsupported_claims": [
+        "To refund a customer you can use either the Stripe Dashboard or the Refunds API",
+        "Determine the charge to refund – locate the original charge ID in your Dashboard or from your integration logs",
+        "Create the refund via Dashboard – open the charge details and click Refund",
+        "Create the refund via API – call the Refund endpoint with the charge ID (e.g., POST /v1/refunds with charge={CHARGE_ID})"
+      ],
+      "retrieved_urls": [
+        "https://docs.stripe.com/refunds",
+        "https://docs.stripe.com/payments/quickstart",
+        "https://docs.stripe.com/payments/quickstart",
+        "https://docs.stripe.com/payments/checkout/custom-components",
+        "https://docs.stripe.com/refunds"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q22",
+      "question": "how do i stop charging someone for a while but keep their subscription",
+      "type": "casual",
+      "expected_urls": [
+        "https://docs.stripe.com/billing/subscriptions/pause-payment"
+      ],
+      "latency_ms": 1517,
+      "answer": "To stop charging a customer temporarily while keeping the subscription active, use **pause payment collection**.\n\n**Steps**\n\n1. Call the **Update Subscription** API (or use the Dashboard) and set the `pause_collection` parameter to pause payments [1].  \n2. The subscription’s status remains unchanged, so you can later resume charging by clearing the pause [1].  \n\n**What the docs say**\n\n- “If you want to keep a subscription active but temporarily stop collecting payment, you can **pause payment collection**. Pausing payment collection doesn’t affect the subscription status…” [1]  \n- Pausing is listed as a use case under “Modify subscriptions” [4].",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/billing/subscriptions/cancel",
+        "https://docs.stripe.com/billing/subscriptions/change-price",
+        "https://docs.stripe.com/billing/subscriptions/cancel",
+        "https://docs.stripe.com/billing/subscriptions/change",
+        "https://docs.stripe.com/billing/subscriptions/billing-cycle"
+      ],
+      "rank": null
+    },
+    {
+      "id": "q23",
+      "question": "card got rejected cause not enough money, how do i test that",
+      "type": "casual",
+      "expected_urls": [
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/declines/codes"
+      ],
+      "latency_ms": 1790,
+      "answer": "To simulate a payment that is declined because the card has insufficient funds, use one of the test cards (or the equivalent test PaymentMethod/Token) that Stripe provides for this specific decline reason.\n\n**Test card number**\n\n| Description | Number | Error code | Decline code |\n|---|---|---|---|\n| Insufficient funds decline | `4000000000009995` | `card_declined` | `insufficient_funds` |\n\nUse this number when creating a payment (e.g., in a test checkout or when creating a PaymentMethod with the card details). The request will return a `card_declined` error with the `insufficient_funds` decline code[1].\n\n**If you need a PaymentMethod object**\n\n| Description | PaymentMethod ID | Error code | Decline code |\n|---|---|---|---|\n| Insufficient funds decline | `pm_card_visa_chargeDeclinedInsufficientFunds` | `card_declined` | `insufficient_funds` |\n\nCreate the PaymentMethod with this ID and attach it to a payment attempt. The result will be the same insufficient‑funds decline[2].\n\n**Important note for attached cards**\n\nCards that simulate issuer declines cannot be attached to a `Customer` object. If you need to test a decline after the card is attached, use the “Decline after attaching” test card (`4000000000000341`) instead[1]. This card attaches successfully but any subsequent charge will fail.",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing",
+        "https://docs.stripe.com/testing"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q24",
+      "question": "how do i know a webhook really came from stripe",
+      "type": "casual",
+      "expected_urls": [
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/webhooks/quickstart"
+      ],
+      "latency_ms": 1090,
+      "answer": "To be sure a webhook request is really from Stripe, use the two protections Stripe recommends:\n\n1. **IP allow‑listing** – configure your server or firewall to accept requests only from the IP address ranges that Stripe uses for webhook delivery[1][2].  \n2. **Signature verification** – Stripe adds a `Stripe‑Signature` header to every webhook event. Verify this signature with the endpoint’s signing secret (available in the Webhooks tab of the Dashboard or via `stripe listen` when using the CLI) using an official Stripe library or your own code[2][5].  \n\nSteps to verify the signature:\n\n1. Retrieve your endpoint’s secret (e.g., from the `STRIPE_WEBHOOK_SECRET` environment variable)[2][3].  \n2. Use the secret to compute and compare the signature in the `Stripe‑Signature` header with the payload you received[2].  \n\nIf both the IP address is allowed and the signature matches, you can be confident the webhook originated from Stripe.",
+      "declined": false,
+      "correct_behavior": true,
+      "faithfulness": 1.0,
+      "unsupported_claims": [],
+      "retrieved_urls": [
+        "https://docs.stripe.com/events/manage-webhook-endpoints",
+        "https://docs.stripe.com/webhooks",
+        "https://docs.stripe.com/billing/quickstart",
+        "https://docs.stripe.com/billing/quickstart",
+        "https://docs.stripe.com/billing/quickstart"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "q25",
+      "question": "What is Stripe's stock price?",
+      "type": "unanswerable",
+      "expected_urls": [],
+      "latency_ms": 1646,
+      "answer": "I couldn't find this in the Stripe documentation I have access to.",
+      "declined": true,
+      "correct_behavior": true,
+      "retrieved_urls": [
+        "https://docs.stripe.com/payments/checkout",
+        "https://docs.stripe.com/declines",
+        "https://docs.stripe.com/saas",
+        "https://docs.stripe.com/payments/checkout/taxes",
+        "https://docs.stripe.com/billing/quickstart"
+      ]
+    },
+    {
+      "id": "q26",
+      "question": "Who is the CEO of Stripe?",
+      "type": "unanswerable",
+      "expected_urls": [],
+      "latency_ms": 878,
+      "answer": "I couldn't find this in the Stripe documentation I have access to.",
+      "declined": true,
+      "correct_behavior": true,
+      "retrieved_urls": [
+        "https://docs.stripe.com/security",
+        "https://docs.stripe.com/payments/checkout",
+        "https://docs.stripe.com/saas",
+        "https://docs.stripe.com/directory",
+        "https://docs.stripe.com/saas"
+      ]
+    },
+    {
+      "id": "q27",
+      "question": "How do I issue virtual cards to my employees with Stripe Issuing?",
+      "type": "unanswerable",
+      "expected_urls": [],
+      "latency_ms": 713,
+      "answer": "I couldn't find this in the Stripe documentation I have access to.",
+      "declined": true,
+      "correct_behavior": true,
+      "retrieved_urls": [
+        "https://docs.stripe.com/billing/subscriptions/usage-based/implementation-guide",
+        "https://docs.stripe.com/payments/checkout/taxes",
+        "https://docs.stripe.com/declines/codes",
+        "https://docs.stripe.com/get-started/data-migrations/overview",
+        "https://docs.stripe.com/billing/subscriptions/usage-based/implementation-guide"
+      ]
+    },
+    {
+      "id": "q28",
+      "question": "What's a good recipe for banana bread?",
+      "type": "unanswerable",
+      "expected_urls": [],
+      "latency_ms": 1801,
+      "answer": "I couldn't find this in the Stripe documentation I have access to.",
+      "declined": true,
+      "correct_behavior": true,
+      "retrieved_urls": [
+        "https://docs.stripe.com/payments/quickstart",
+        "https://docs.stripe.com/billing/quickstart",
+        "https://docs.stripe.com/payments/quickstart",
+        "https://docs.stripe.com/billing/quickstart",
+        "https://docs.stripe.com/billing/quickstart"
+      ]
+    }
+  ]
+}
