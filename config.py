@@ -26,3 +26,23 @@ QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 # How many chunks to retrieve for each question.
 TOP_K = 5
+
+# The LLM that writes answers, served free by Groq (https://console.groq.com).
+# Which models you can use depends on your account; rag.py prints the list if
+# this one isn't available. "openai/gpt-oss-20b" is a faster alternative.
+LLM_MODEL = "openai/gpt-oss-120b"
+
+# gpt-oss is a "reasoning" model: it thinks privately before answering, and
+# those thinking tokens count against free-tier limits. Looking things up in
+# provided documents needs little reasoning, so "low" is faster and cheaper.
+# Options: "low", "medium", "high". Only sent to gpt-oss models.
+LLM_REASONING_EFFORT = "low"
+
+# 0 = always pick the most likely next word. For answering from documents we
+# want consistency and faithfulness, not creativity.
+LLM_TEMPERATURE = 0
+
+# The exact sentence the model must use when the docs don't contain the answer.
+# Having one fixed sentence lets the app (and our evaluation in Stage 7)
+# reliably detect "I don't know" answers.
+NO_ANSWER = "I couldn't find this in the Stripe documentation I have access to."
